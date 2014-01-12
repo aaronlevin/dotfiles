@@ -1,0 +1,7 @@
+*.swp
+.vim/bundle
+.xmonad/xmonad-x86_64-linux
+.xmonad/xmonad.errors
+.xmonad/xmonad.hi
+.xmonad/xmonad.o
+.vim/bundle
