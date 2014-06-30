@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# work setup has three monitors
+function work_setup() {
+  xrandr --output DP-2 --primary
+  xrandr --output HDMI-0 --rotate right
+  xrandr --output HDMI-0 --right-of DP-2
+  xrandr --output DP-0 --right-of HDMI-0
+}
+
+# test if work
+is_work() {
+  local var=$1
+  [[ $var == "work" ]]
+}
+
+is_solo() {
+  local var=$1
+  [[ $var == "solo" ]]
+}
+
+# Main function
+main() {
+
+  if is_work "$1"; then
+    work_setup
+  elif is_solo "$1"; then
+    exit 1
+  else
+    echo "unknown mode: $1\ntry \"work\" or \"home\""
+  fi
+
+}
+
+main "$*"
