@@ -1,11 +1,30 @@
 #!/bin/bash
 
+function dp_monitor_num() {
+  local num=`xrandr | grep -oP 'DP\-[01](?=\sconnected)'`
+  echo $num
+}
+
 # work setup has three monitors
+#                              +----------+
+#  +-----------------+         |          |
+#  |                 |         |          |     +----------------------+
+#  |                 |         |          |     |                      |
+#  |     DP-2        |         |          |     |                      |
+#  |                 |         |  DP-0/1  |     |        HDMI-0        |
+#  |                 |         |          |     |                      |
+#  +-----------------+         |          |     |                      |
+#  \    qwertyuiop    \        |          |     +----------------------+
+#   \    asdfghjkl;    \       |          |
+#    \    zxcvbnm,.     \      +----------+
+#     \__________________\
+
 function work_setup() {
+  local dp_monitor=`dp_monitor_num`
   xrandr --output DP-2 --primary
-  xrandr --output HDMI-0 --rotate right
-  xrandr --output HDMI-0 --right-of DP-2
-  xrandr --output DP-0 --right-of HDMI-0
+  xrandr --output "$dp_monitor" --rotate right
+  xrandr --output "$dp_monitor" --right-of DP-2
+  xrandr --output HDMI-0 --right-of "$dp_monitor"
 }
 
 # test if work
@@ -19,6 +38,10 @@ is_solo() {
   [[ $var == "solo" ]]
 }
 
+set_background() {
+  /home/aaron/bin/set_background
+}
+
 # Main function
 main() {
 
@@ -29,6 +52,8 @@ main() {
   else
     echo "unknown mode: $1\ntry \"work\" or \"home\""
   fi
+
+  set_background
 
 }
 
