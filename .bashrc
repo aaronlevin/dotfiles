@@ -6,10 +6,8 @@
 [[ $- != *i* ]] && return
 
 # PATH
-GEMPATH="$(ruby -rubygems -e "puts Gem.user_dir")/bin"
-CABALPATH="/home/aaron/.cabal/bin"
 HOMEPATH="/home/aaron/bin"
-export PATH=$CABALPATH:$PATH:$GEMPATH:$HOMEPATH
+export PATH=$PATH:$HOMEPATH
 
 alias ls='ls --color=auto'
 alias ll='ls -l --color=auto'
