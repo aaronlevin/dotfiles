@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# map capslock to mod4
+setxkbmap -option \
+  -model apple_laptop \
+  -layout us \
+  -variant mac \
+  -option altwin:ctrl_win \
+  -option caps:super \
+  -option compose:ralt
+
+# keyboard rate
+xset r rate 200 60
