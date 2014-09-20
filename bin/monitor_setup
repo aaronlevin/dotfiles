@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function dp_monitor_num() {
   local num=`xrandr | grep -oP 'DP\-[01](?=\sconnected)'`
