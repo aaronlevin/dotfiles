@@ -62,6 +62,9 @@
     dejavu_fonts
     dmenu
     xclip
+    htop
+    irssi
+    jq
   ];
 
   # List services that you want to enable:
