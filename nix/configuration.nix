@@ -53,8 +53,6 @@
     rxvt_unicode
     gcc
     binutils
-    nix
-    haskellPackages.haskellPlatform
     chromium
     firefoxWrapper
     trayer
