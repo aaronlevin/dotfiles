@@ -16,7 +16,13 @@
   # Define on which hard drive you want to install Grub.
   boot.loader.grub.device = "/dev/sda";
  
-  boot.kernelPackages = pkgs.linuxPackages_3_15;
+  boot.kernelPackages = pkgs.linuxPackages_3_16;
+
+  boot.extraModprobeConfig = ''
+    options snd_hda_intel enable=0,1
+  '';
+
+  time.timeZone = "EST";
 
   networking.hostName = "nixos"; # Define your hostname.
   networking.wireless.enable = true;  # Enables wireless.
@@ -65,6 +71,7 @@
     htop
     irssi
     jq
+    gnumake
   ];
 
   # List services that you want to enable:
@@ -78,13 +85,21 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.layout = "us";
-  # services.xserver.xkbOptions = "eurosign:e";
+
+  # key maps
+  services.xserver.xkbOptions = "altwin:ctrl_win, altwin:ctrl_alt_win, caps:super";
 
   # Enable xmonad
   services.xserver.windowManager.xmonad.enable = true;
   services.xserver.windowManager.xmonad.enableContribAndExtras = true;
   services.xserver.windowManager.default = "xmonad";
   services.xserver.desktopManager.default = "none";
+  
+
+  services.xserver.displayManager.sessionCommands = ''
+    ${pkgs.xlibs.xset}/bin/xset r rate 200 60
+    [[ -f ~/.Xresources ]] && ${pkgs.xlibs.xrdb}/bin/xrdb -merge ~/.Xresources
+  '';
 
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.kdm.enable = true;
@@ -95,6 +110,17 @@
   services.xserver.synaptics.twoFingerScroll = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.extraUsers.aterica = {
+    name = "aterica";
+    group = "users";
+    uid = 1001;
+    createHome = true;
+    password = "changeme";
+    home = "/home/aterica";
+    extraGroups = ["wheel"];
+    shell = "/run/current-system/sw/bin/bash";
+  };
+
   users.extraUsers.aaronlevin = {
     name = "aaronlevin";
     group = "users";
