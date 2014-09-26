@@ -22,10 +22,11 @@
     options snd_hda_intel enable=0,1
   '';
 
-  time.timeZone = "EST";
+  time.timeZone = "Canada/Eastern";
 
   networking.hostName = "nixos"; # Define your hostname.
   networking.wireless.enable = true;  # Enables wireless.
+  networking.interfaceMonitor.enable = true;
 
   # Select internationalisation properties.
   i18n = {
@@ -72,6 +73,12 @@
     irssi
     jq
     gnumake
+    dropbox
+    lsof
+    slock
+    evince
+    xpdf
+    ack
   ];
 
   # List services that you want to enable:
@@ -94,7 +101,6 @@
   services.xserver.windowManager.xmonad.enableContribAndExtras = true;
   services.xserver.windowManager.default = "xmonad";
   services.xserver.desktopManager.default = "none";
-  
 
   services.xserver.displayManager.sessionCommands = ''
     ${pkgs.xlibs.xset}/bin/xset r rate 200 60

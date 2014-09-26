@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-function dp_monitor_num() {
-  local num=`xrandr | grep -oP 'DP\-[01](?=\sconnected)'`
+display_link_monitor_num() {
+  local num=`xrandr | grep -oP 'DVI\-1\-[01](?=\sconnected)'`
   echo $num
 }
 
@@ -19,12 +19,14 @@ function dp_monitor_num() {
 #    \    zxcvbnm,.     \      +----------+
 #     \__________________\
 
-function work_setup() {
-  local dp_monitor=`dp_monitor_num`
-  xrandr --output DP-2 --primary
-  xrandr --output "$dp_monitor" --rotate right
-  xrandr --output "$dp_monitor" --right-of DP-2
-  xrandr --output HDMI-0 --right-of "$dp_monitor"
+work_setup() {
+  local display_link_monitor="`display_link_monitor_num`"
+  xrandr --setprovideroutputsource 1 0
+  xrandr --output eDP1 --primary
+  xrandr --auto
+  xrandr --output HDMI1 --left-of eDP1
+  xrandr --output $display_link_monitor --left-of HDMI1
+
 }
 
 # test if work
@@ -38,8 +40,8 @@ is_solo() {
   [[ $var == "solo" ]]
 }
 
-set_background() {
-  /home/aaron/bin/set_background
+set_bg() {
+  feh --bg-center "/home/aterica/Downloads/haskell_background.png"
 }
 
 # Main function
@@ -47,13 +49,14 @@ main() {
 
   if is_work "$1"; then
     work_setup
+    work_setup
   elif is_solo "$1"; then
     exit 1
   else
     echo "unknown mode: $1\ntry \"work\" or \"home\""
   fi
 
-  set_background
+  set_bg
 
 }
 
