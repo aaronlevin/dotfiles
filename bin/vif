@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+search() {
+  local expr="$1"
+  local index="$2"
+  local results=(`find . -name $expr`)
+
+  echo ${results["$index"]}
+}
+
+main() {
+  if [[ -z "$2" ]]; then
+    vim `search "$1" "0"`
+  else
+    vim `search "$1" "$2"`
+  fi
+}
+main "$@"
