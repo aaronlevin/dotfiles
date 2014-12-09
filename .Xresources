@@ -92,7 +92,7 @@ URxvt*fading:                         30
 ! URxvt*borderColor:                    color
 ! URxvt*iconFile:                       file
 ! URxvt*font:                           fontname
-URxvt*font:                            xft:Dejavu Sans Mono:pixelsize=20
+URxvt*font:                            xft:Dejavu Sans Mono:pixelsize=16
 ! URxvt*boldFont:                       fontname
 ! URxvt*boldFont:                        xft:Dejavu Sans Mono:pixelsize=10.5
 ! URxvt*italicFont:                     fontname

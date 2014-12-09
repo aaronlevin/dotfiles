@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 display_link_monitor_num() {
-  local num=`xrandr | grep -oP 'DVI\-1\-[01](?=\sconnected)'`
+  local num=`xrandr | grep -oP 'DVI\-1\-[0-9](?=\sconnected)'`
   echo $num
 }
 
