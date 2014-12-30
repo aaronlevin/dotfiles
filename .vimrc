@@ -9,25 +9,22 @@ call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
-Plugin 'scrooloose/syntastic'
-Plugin 'Shougo/neocomplete'
-Plugin 'eagletmt/neco-ghc'
 Plugin 'Shougo/vimshell.vim'
 Plugin 'Shougo/vimproc.vim'
-Plugin 'majutsushi/tagbar'
+Plugin 'Shougo/neocomplete'
 Plugin 'travitch/hasksyn'
-Plugin 'lukerandall/haskellmode-vim'
 Plugin 'flazz/vim-colorschemes'
-Plugin 'bitc/lushtags'
-Plugin 'bitc/vim-hdevtools'
 Plugin 'bling/vim-airline'
 Plugin 'tpope/vim-fugitive'
 Plugin 'eagletmt/ghcmod-vim'
+Plugin 'eagletmt/neco-ghc'
 Plugin 'derekwyatt/vim-scala'
-Plugin 'kien/ctrlp.vim'
 Plugin 'guns/vim-clojure-static'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'krisajenkins/vim-pipe'
+Plugin 'scrooloose/syntastic'
+Plugin 'majutsushi/tagbar'
+" Plugin 'kien/ctrlp.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -49,21 +46,12 @@ set autoindent
 set history=1000                  " keep lots of history of commands
 set expandtab                     " spaces, not tabs
 set background=light
+set swapfile
+set dir=~/tmp
 syntax enable                     " use syntax hilighting
 syntax on
-"if !has("gui_running")
-"  colorscheme ir_black
-"else
-"  colorscheme ir_black
-"endif
 
 hi Search cterm=NONE ctermfg=none ctermbg=black
-
-"set bg=dark                      " background is light?
-
-"set guifont=Envy\ Code\ R:11:cDEFAULT,ProFontWindows:h10:cANSI,Lucida_Console:h10:cANSI,Courier_New:h10:cANSI
-"set guifont=Envy\ Code\ R
-"set guifont=ProFont\ 11
 
 set ruler                  " always show cursor location in file
 set showcmd                " show partially typed commands
@@ -120,82 +108,60 @@ let g:necoghc_enable_detailed_browse = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:airline#extensions#whitespace#enabled = 0
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Syntastic
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_haskell_ghc_mod_exec = '/usr/bin/env ghc-mod'
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " >>= Haskell
-au BufEnter *.hs compiler ghc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:haddock_browser="/usr/bin/firefox"
-let g:haskellmode_completion_ghc=0
-let g:haskellmode_completion_haddock=0
+let g:ghcmod_ghc_options = [ '-isrc', '-idist/build/autogen', '-fno-warn-missing-signatures',  '-fno-warn-orphans' ]
+let g:ghc="/usr/bin/env ghc"
 
-" let g:syntastic_haskell_checkers = ['ghc-mod']
+autocmd BufWritePost *.hs GhcModCheckAndLintAsync
+au Filetype haskell setlocal tabstop=8 expandtab softtabstop=4 shiftwidth=4 shiftround
 
-au FileType haskell nnoremap <buffer> <F1> :HdevtoolsType<CR>
-au FileType haskell nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
-au FileType haskell nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
+map <silent> tt :GhcModType<CR>
+map <silent> tw :GhcModTypeClear<CR>
 
-let g:ghcmodtypetoggle = 0
+let g:tagbar_type_haskell = {
+    \ 'ctagsbin'  : 'hasktags',
+    \ 'ctagsargs' : '-x -c -o-',
+    \ 'kinds'     : [
+        \  'm:modules:0:1',
+        \  'd:data: 0:1',
+        \  'd_gadt: data gadt:0:1',
+        \  't:type names:0:1',
+        \  'nt:new types:0:1',
+        \  'c:classes:0:1',
+        \  'cons:constructors:1:1',
+        \  'c_gadt:constructor gadt:1:1',
+        \  'c_a:constructor accessors:1:1',
+        \  'ft:function types:1:1',
+        \  'fi:function implementations:0:1',
+        \  'o:others:0:1'
+    \ ],
+    \ 'sro'        : '.',
+    \ 'kind2scope' : {
+        \ 'm' : 'module',
+        \ 'c' : 'class',
+        \ 'd' : 'data',
+        \ 't' : 'type'
+    \ },
+    \ 'scope2kind' : {
+        \ 'module' : 'm',
+        \ 'class'  : 'c',
+        \ 'data'   : 'd',
+        \ 'type'   : 't'
+    \ }
+\ }
 
-function! GhcModTypeToggle()
-  if g:ghcmodtypetoggle == 0
-    let g:ghcmodtypetoggle=1
-    GhcModType
-  else
-    let g:ghcmodtypetoggle=0
-    GhcModTypeClear
-  endif
-endfunction
-
-function! s:find_basedir() "{{{
-" search Cabal file
-  if !exists('b:ghcmod_basedir')
-    let l:ghcmod_basedir = expand('%:p:h')
-    let l:dir = l:ghcmod_basedir
-    for _ in range(6)
-      if !empty(glob(l:dir . '/*.cabal', 0))
-        let l:ghcmod_basedir = l:dir
-        break
-      endif
-      let l:dir = fnamemodify(l:dir, ':h')
-    endfor
-    let b:ghcmod_basedir = l:ghcmod_basedir
-  endif
-  return b:ghcmod_basedir
-endfunction "}}}
-
-" use ghc functionality for haskell files
-let sandbox_dir = '/.cabal-sandbox/x86_64-linux-ghc-7.8.3-packages.conf.d'
-let g:ghc="/usr/bin/ghc"
-augroup filetype_hs
-    autocmd!
-    "autocmd Bufenter *.hs let dir = s:find_basedir() . sandbox_dir
-    autocmd Bufenter *.hs compiler ghc
-    "autocmd Bufenter *.hs let b:ghc_staticoptions = '-package-db ' . dir
-    "autocmd Bufenter *.hs let g:ghcmod_ghc_options = ['-package-db ' . dir]
-    " autocmd Bufenter *.hs let g:syntastic_haskell_ghc_mod_args = '-g -package-db='.dir
-    "autocmd Bufenter *.hs let g:hdevtools_options = '-g-ilib -g-isrc -g-i. -g-idist/build/autogen -g-Wall -g-package-db='.dir
-augroup END
-
-" Toggle between active and passive type checking
-" to always show the error list, enable this flag:
-"   let g:syntastic_auto_loc_list=1
-map <silent> <Leader>e :Errors<CR>
-map <Leader>s :SyntasticToggleMode<CR>
-
-" ghc-mod settings
-" Reload
-"map <silent> tw :call GHC_BrowseAll()<CR>
-map <silent> tw :GhcModType<CR>
-" Type Lookup
-"map <silent> tw :call GHC_ShowType(0)<CR>
-map <silent> tu :GhcModTypeClear<CR>
-map <silent>tt :call GhcModTypeToggle()<CR>
-
-"##############################################################################
-" Clojure
-"##############################################################################
-
-"##############################################################################
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Mappings
-"##############################################################################
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Alt-] to open a tag in a new split
 map <A-]> :sp <CR>:exec("tag ".expand("<cword>"))<CR>
@@ -216,8 +182,9 @@ map <F11> m`:retab<CR>:%s/\s\+$//eg<CR>``
 " useful when writing syntax files.
 map <F12> :syn sync fromstart<CR>
 
-" map :TagbarOpen
-"nmap <silent> <c-t> :TagbarOpen<CR>
+" map :TagbarToggle
+nmap <silent> <leader>t :TagbarToggle<CR>
+
 
 "##############################################################################
 " Easier split navigation
@@ -234,40 +201,8 @@ map <leader>v :vsplit<CR>
 "map <leader>s :split<CR>
 map <leader>c :close<CR>
 " open current split in new tab
-map <leader>t <C-W>T
+" map <leader>t <C-W>T
 
-
-"##############################################################################
-" Functions
-"
-"   syntax: "function!" causes a function to be replaced if it exists already
-"##############################################################################
-
-" Ripped from https://github.com/mkitt/tabline.vim
-function! Tabline()
-  let s = ''
-  for i in range(tabpagenr('$'))
-    let tab = i + 1
-    let winnr = tabpagewinnr(tab)
-    let buflist = tabpagebuflist(tab)
-    let bufnr = buflist[winnr - 1]
-    let bufname = bufname(bufnr)
-    let bufmodified = getbufvar(bufnr, "&mod")
-
-    let s .= '%' . tab . 'T'
-    let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
-    let s .= ' ' . tab .':'
-    let s .= (bufname != '' ? '['. fnamemodify(bufname, ':t') . '] ' : '[No Name] ')
-
-    if bufmodified
-      let s .= '[+] '
-    endif
-  endfor
-
-  let s .= '%#TabLineFill#'
-  return s
-endfunction
-set tabline=%!Tabline()
 
 " Hit <s-CR> (used to use <CR>, but screws up use of quickfix window) to
 " highlight the current word without moving the screen.  n/N works to jump
