@@ -1,6 +1,6 @@
 Config { bgColor = "#333333"
        , fgColor = "grey"
-       , font =  "xft:DejaVu Sans Mono:size=6"
+       , font =  "xft:DejaVu Sans Mono:size=10"
        , position = TopW L 100
        , commands = [ Run Cpu ["-L", "3", "-H", "50", "--normal", "green", "--high", "red"] 10
                     , Run Battery ["-t", "bat: <left>%", "Bat0"] 600

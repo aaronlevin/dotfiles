@@ -1,8 +1,9 @@
 [user]
-	email = vilevin@gmail.com
-	name = aaron levin
+  email = aaron.levin@soundcloud.com
+  name = aaron levin
 
 [alias]
+  co = checkout
   lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative -n 30
   lga = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   ls = log --pretty=format:'%C(yellow)%h%Cred%d %Creset%s%C(bold blue) [%cn]' --decorate
@@ -18,4 +19,5 @@
   status = auto
   interactive = auto
 [core]
-	editor = vim
+  editor = vim
+	excludesfile = ~/.gitignore

@@ -1,8 +1,7 @@
-*.swp
-*.un~
-.vim/bundle
-.xmonad/xmonad-x86_64-linux
-.xmonad/xmonad.errors
-.xmonad/xmonad.hi
-.xmonad/xmonad.o
-.vim/bundle
+tags
+TAGS
+codex.tags
+.idea/*
+.ensime
+.ensime_cache
+.tags

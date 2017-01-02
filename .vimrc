@@ -8,11 +8,12 @@ call vundle#begin()
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
+Plugin 'VundleVim/Vundle.vim'
 Plugin 'Shougo/vimshell.vim'
 Plugin 'Shougo/vimproc.vim'
 Plugin 'Shougo/neocomplete'
-Plugin 'travitch/hasksyn'
+" Plugin 'travitch/hasksyn'
+Plugin 'neovimhaskell/haskell-vim'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'bling/vim-airline'
 Plugin 'tpope/vim-fugitive'
@@ -24,12 +25,22 @@ Plugin 'plasticboy/vim-markdown'
 Plugin 'krisajenkins/vim-pipe'
 Plugin 'scrooloose/syntastic'
 Plugin 'majutsushi/tagbar'
-" Plugin 'kien/ctrlp.vim'
+Plugin 'kien/ctrlp.vim'
+"Plugin 'cypok/vim-sml'
+Plugin 'chilicuil/vim-sml-coursera'
+Plugin 'raichoo/purescript-vim'
+Plugin 'dansomething/vim-eclim'
+Plugin 'frigoeu/psc-ide-vim'
+"Plugin 'ensime/ensime-vim'
+"Plugin 'lukerandall/haskellmode-vim'
+Plugin 'let-def/ocp-indent-vim'
+Plugin 'idris-hackers/idris-vim'
+Plugin 'fatih/vim-go.git'
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+set rtp+=/home/aaronlevin/.vim/bundle/ocp-indent-vim/
 
+call vundle#end()
+filetype plugin indent on
 
 set modeline                      " this is off in Ubuntu by default; f that
 set t_Co=256                      " terminal has 256 colours
@@ -61,7 +72,7 @@ set tabstop=2              " number of spaces that a <Tab> in the file counts fo
 set shiftwidth=2           " number of spaces to use for each step of autoindent
 set hidden                 " allow switching buffers even if not saved
 set showmatch              " match parentheses as you type them
-set foldmethod=syntax
+set foldmethod=manual      " used to be syntax
 set foldlevel=100          " Don't autofold anything
 set nolist                   " show normally hidden characters
 hi SpecialKey guifg=darkgray  " make the listchars characters show up dark gray
@@ -87,7 +98,7 @@ set guitablabel=\[%N\]\ %t\ %M " Display tab number and filename in tab
 set grepprg=ack-grep\ --column
 set grepformat=%f:%l:%c:%m
 " set tags=./tags;/         
-set tags=tags;/,codex.tags;/ " <-- searches parent dirs for tags files
+set tags=.tags;/,tags;/,codex.tags;/ " <-- searches parent dirs for tags files
 set autochdir             " change working dir to be the location of the current file
 let mapleader = ","
 let maplocalleader = "\\"
@@ -100,8 +111,11 @@ set formatoptions+=l      " Don't break and auto-format long lines.
 " Necomplecache
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:neocomplete#enable_at_startup = 1
-let g:necoghc_debug = 1
+let g:haskellmode_completion_ghc = 1
+" autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+"let g:necoghc_debug = 1
 let g:necoghc_enable_detailed_browse = 1
+let g:haskell_classic_highlighting = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-Airline plugin
@@ -118,14 +132,18 @@ let g:syntastic_haskell_ghc_mod_exec = '/usr/bin/env ghc-mod'
 " >>= Haskell
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:haddock_browser="/usr/bin/firefox"
-let g:ghcmod_ghc_options = [ '-isrc', '-idist/build/autogen', '-fno-warn-missing-signatures',  '-fno-warn-orphans' ]
+let g:ghcmod_ghc_options = [ '-isrc', '-idist/build/autogen', '-fno-warn-missing-signatures',  '-fno-warn-orphans', '--with-ghc-pkg=$NIX_GHC_LIBDIR']
 let g:ghc="/usr/bin/env ghc"
 
 autocmd BufWritePost *.hs GhcModCheckAndLintAsync
-au Filetype haskell setlocal tabstop=8 expandtab softtabstop=4 shiftwidth=4 shiftround
+au Filetype haskell setlocal tabstop=8 expandtab softtabstop=2 shiftwidth=2 shiftround
 
 map <silent> tt :GhcModType<CR>
-map <silent> tw :GhcModTypeClear<CR>
+map <silent> te :GhcModTypeClear<CR>
+map <silent> ti :GhcModInfo<CR>
+map <silent> tip :GhcModInfoPreview<CR>
+map <silent> tw :GhcModTypeInsert<CR>
+map <silent> ts :GhcModSplitFunCase<CR>
 
 let g:tagbar_type_haskell = {
     \ 'ctagsbin'  : 'hasktags',
@@ -227,6 +245,13 @@ nmap <Space> :noh<CR>
 au Filetype python setlocal ts=4 sw=4 sts=4 tw=79
 
 au Filetype scala setlocal foldmethod=indent tw=80 formatoptions+=l
+"au Filetype scala nnoremap <leader>t :EnTypeCheck<CR>
+"au FileType scala nnoremap <leader>df :EnDeclaration<CR>
+"au FileType scala nnoremap <leader>dff :EnDeclarationSplit<CR>
+"au FileType scala nnoremap <leader>dfv :EnDeclarationSplit v<CR>
+"autocmd FileType scala setlocal omnifunc=ensime#fun_en_complete_func
+
+" autocmd BufWritePost *.scala :EnTypeCheck
 
 au Filetype mkd setlocal foldlevel=100
 
@@ -236,3 +261,4 @@ au BufNewFile,BufRead *.sql setf pgsql
 
 " For now, overthink's only use of vim-pipe is showing rendered markdown
 let b:vimpipe_command="multimarkdown | lynx -dump -stdin"
+
