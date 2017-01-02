@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+monitor-fix
+setxkbmap -option compose:rctrl
+[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
+[[ -f ~/.Xdefaults ]] && xrdb -merge ~/.Xdefaults
+# xrandr --output eDP1 --primary
+xrandr --output "DP2-1" --primary
+xrandr --output "DP2-1" --right-of eDP1
+feh --bg-scale /etc/images/haskell.png
+xset r rate 200 60
